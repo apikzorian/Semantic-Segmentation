@@ -57,18 +57,31 @@ In the layers function, we replace the fully connected layer with a 1x1 convolut
 
 `    layer = tf.layers.conv2d(vgg_layer7_out, NUM_CLASSES, 1, padding='same', strides=1)`
 
-### Decoder
+#### Decoder
 To build the decoder, we upsampled the input to the original image size. We created tensors for the 3rd and 4th pooling layers and created transposed convolutions to upsample the input image:
 
-`  layer = tf.layers.conv2d_transpose(layer, NUM_CLASSES, 4, padding='same', strides=2)`
+```
+layer = tf.layers.conv2d_transpose(layer, NUM_CLASSES, 4, padding='same', strides=2)
 
-`    layer = tf.layers.conv2d_transpose(layer, NUM_CLASSES, 4, padding='same', strides=2)`
+layer = tf.layers.conv2d_transpose(layer, NUM_CLASSES, 4, padding='same', strides=2)
+```
 
 #### Skipped Connections
+We combined the output of two layers: The current layer and a layer further back in the network (typically this is supposed to be a pooling layer).
+
+In `layers()`, we combined the result of the previous layer with the result of the 4th pooling layers through elementwise additon and followed it with another transposed convolution. This step was repeated for the third pooling layer output
+
+
+### Training
+
+We used an adams optimizer with a 1E-4 learning rate and ran on 300 epochs with a batch size of 16. Since the goal of using this FCN was to assign each pixel to its appropriate class, we were able to usilitze the cross entropy loss function. To do this, we had to reshape the output tensor to a 2D tensor, where each row represents a pixel and each column represents a class (lines ?)
+
+
+## Results
 
 
 
-
+## Acknowledgment
 
 
 
@@ -77,4 +90,3 @@ Run the following command to run the project:
 ```
 python main.py
 ```
-**Note** If running this in Jupyter Notebook system messages, such as those regarding test status, may appear in the terminal rather than the notebook.
