@@ -12,7 +12,9 @@ Make sure you have the following is installed:
 ##### Dataset
 Download the [Kitti Road dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php) from [here](http://www.cvlibs.net/download.php?file=data_road.zip).  Extract the dataset in the `data` folder.  This will create the folder `data_road` with all the training a test images.
 
-## Fully-Connected Network
+## Concepts
+
+### Fully-Connected Network
 
 The main advantage of using fully-convolutional network is that we can preserve spatial information. While the classic fully-connected networks consist of a series of convolutional layers, followed by some fully connected layers, the fully-convolutional network replaces these fully-connected layers with a single 1x1 convolution, followed by a series of transposed convolutional layers. Below is an example of the layout of a fully-convolutional network.
 
@@ -32,13 +34,40 @@ A FCN is usually comprised of two parts: encoder and decoder (as seen below):
 
 The purpose of the encoder is to extract features from the image, while the decoder is responsible for upscaling the output, so that it ends up the same size as the original image. Another advantage of using an FCN is that since convolutional operations really do not care about the size of the image, FCN can work on an image of any size. In a classic CNN with fully connected layers at the end, the size of the input is always constrained by the size of the fully connected layers. 
 
+One drawback of using convolutions or encoding in general is that we get "tunnel vision", where we look very closely at some features and lose the bigger picture in the end. Information gets lost when moving through layers because of this narrow scope. Skip connections provide a way of retaining the information easily. By connecting the output of one layer to a non-adjacent layer, skip connections allow the network to ustilize information from multiple resolutions that may have been optimized away. This results in the network being able to make more precise segmentation decisions. 
+
+![alt_tag](https://image.ibb.co/mfxcCQ/skipconnections.png)
+
 ### Semantic Segmentation
 
 The idea behind semantic segmentation is assigning meaning to different parts of an object. In this project, we accomplish this on the pixel level, by assigning pixels to a target class (i.e. road, car, person, etc). We've seen well known applications of bounding boxes for indetifying objects in images, such as YOLO and SSD. Bounding boxes are very effective at high frame-per-second, but have their limitations. For example, we can see the limitations when detecting a windy road and trying to draw a box around it. With semantic segmentation, we can derive information about each pixel in an image, rather than partitioning sections of the image into bounding boxes. 
 
-
+![alt_tag](https://image.ibb.co/c7DjsQ/semanticseg.png)
 
 ## Implementation
+
+We used the [Kitti Road dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php) to train and test our model. 
+
+### FCN Components
+
+#### Encoder
+We made use of the pretrained VGG model for our encoder and utilizied the approach described in [this paper](https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf). VGG16 model is pretrained on ImageNet for classification and the fully-connected layers are replaced by 1-by-1 convolutions. In the `load_vgg` function, we extract tensors layers 3, 4, and 7 from the saved vgg model, as well as tensors for the input and keep probability. 
+
+In the layers function, we replace the fully connected layer with a 1x1 convolution (line ?):
+
+`    layer = tf.layers.conv2d(vgg_layer7_out, NUM_CLASSES, 1, padding='same', strides=1)`
+
+### Decoder
+To build the decoder, we upsampled the input to the original image size. We created tensors for the 3rd and 4th pooling layers and created transposed convolutions to upsample the input image:
+
+`  layer = tf.layers.conv2d_transpose(layer, NUM_CLASSES, 4, padding='same', strides=2)`
+
+`    layer = tf.layers.conv2d_transpose(layer, NUM_CLASSES, 4, padding='same', strides=2)`
+
+#### Skipped Connections
+
+
+
 
 
 
