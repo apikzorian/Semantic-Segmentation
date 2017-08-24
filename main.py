@@ -7,9 +7,7 @@ import project_tests as tests
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-
-
-EPOCHS = 150
+EPOCHS = 300
 BATCH_SIZE = 16
 LEARN_RATE = 1e-4
 NUM_CLASSES = 2
@@ -55,7 +53,7 @@ def load_vgg(sess, vgg_path):
 tests.test_load_vgg(load_vgg, tf)
 
 
-def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out):
+def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     Creates the layers for a fully convolutional network.  Build skip-layers using the vgg layers.
     :param vgg_layer7_out: TF Tensor for VGG Layer 3 output
@@ -96,7 +94,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out):
 tests.test_layers(layers)
 
 
-def optimize(nn_last_layer, correct_label, learning_rate):
+def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     """
     Generates TensorFLow loss and optimizer operations.
     :param nn_last_layer: TF Tensor of the last layer in the neural network
@@ -106,8 +104,8 @@ def optimize(nn_last_layer, correct_label, learning_rate):
     """
 
     # Reshape so that logits and labels are 2-D tensors where row represents a pixel and column represents a class
-    logits = tf.reshape(nn_last_layer, (-1, NUM_CLASSES))
-    correct_label_2D = tf.reshape(correct_label, (-1, NUM_CLASSES))
+    logits = tf.reshape(nn_last_layer, (-1, num_classes))
+    correct_label_2D = tf.reshape(correct_label, (-1, num_classes))
 
     # Apply cross-entropy for loss function
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=correct_label_2D, logits=logits)
@@ -123,7 +121,7 @@ def optimize(nn_last_layer, correct_label, learning_rate):
 tests.test_optimize(optimize)
 
 
-def train_nn(sess, get_batches_fn, train_op, cross_entropy_loss, input_image,
+def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input_image,
              correct_label, keep_prob, learning_rate):
     """
     Train neural network and print out the loss during training.
@@ -139,14 +137,13 @@ def train_nn(sess, get_batches_fn, train_op, cross_entropy_loss, input_image,
 
     batches = 0
     sess.run(tf.global_variables_initializer())
-    loss_list = []
-
 
     print("Number of Epochs: ", EPOCHS)
     print("Batch Size: ", BATCH_SIZE)
     print("Learning rate: ", LEARN_RATE)
     print("Being training...")
 
+    loss_list = []
     for i in range(EPOCHS):
         batch_num = 0
         for images, labels in get_batches_fn(BATCH_SIZE):
@@ -158,10 +155,15 @@ def train_nn(sess, get_batches_fn, train_op, cross_entropy_loss, input_image,
             _, loss = sess.run([train_op, cross_entropy_loss],
                                feed_dict={learning_rate: LEARN_RATE, correct_label: labels,
                                           keep_prob: 1.0, input_image: images})
-
-            print("Epoch {}, Batch {}, Loss {:.5f}".format((i+1), batch_num, loss))
             loss_list.append(loss)
+            print("Epoch {}, Batch {}, Loss {:.5f}".format((i+1), batch_num, loss))
 
+    return loss_list, batches
+
+tests.test_train_nn(train_nn)
+
+
+def plot_loss(loss_list, batches):
     # Plot loss over epochs
     total_batches = batches * EPOCHS
     print(total_batches)
@@ -183,19 +185,16 @@ def train_nn(sess, get_batches_fn, train_op, cross_entropy_loss, input_image,
 
     plt.show()
 
-#tests.test_train_nn(train_nn)
-
-
 def run():
 
-    #tests.test_for_kitti_dataset(data_dir)
-
-    # Initialize
+    # Initialize values
     image_shape = (160, 576)
     data_dir = './data'
     runs_dir = './runs'
     label = tf.placeholder(tf.float32, shape=[BATCH_SIZE, image_shape[0], image_shape[1], NUM_CLASSES])
     learn_rate = tf.placeholder(tf.float32, shape=[])
+
+    tests.test_for_kitti_dataset(data_dir)
 
     # Download pretrained vgg model
     #helper.maybe_download_pretrained_vgg(data_dir)
@@ -214,15 +213,14 @@ def run():
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
-        last_layer = layers(layer3_out, layer4_out, layer7_out)
-        logits, training_operation, loss_operation = optimize(last_layer, label, learn_rate)
+        last_layer = layers(layer3_out, layer4_out, layer7_out, NUM_CLASSES)
+        logits, training_operation, loss_operation = optimize(last_layer, label, learn_rate, NUM_CLASSES)
 
-        # TODO: Train NN using the train_nn function
-
-        train_nn(sess, get_batches_fn, training_operation, loss_operation, input_image,
+        loss_list, batches = train_nn(sess, EPOCHS, BATCH_SIZE, get_batches_fn, training_operation, loss_operation, input_image,
                  label, keep_prob, learn_rate)
 
-        # TODO: Save inference data using helper.save_inference_samples
+        plot_loss(loss_list, batches)
+
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
