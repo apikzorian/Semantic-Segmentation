@@ -85,7 +85,7 @@ Below is a graph that shows an exponential decay in loss over 50 epochs. Trainin
 
 The results were better than expected given the parameters we used. Initially I had opted to use 300 epochs but quickly realized that although the results were impressive, runtime was an issue. I resolved this by lowering the batch size from 16 to 4 and lowering the number of epochs. Below are a few samples of my results
 
-![alt_tag](https://image.ibb.co/doDpJk/um_000017_og.png)
+![alt_tag](https://image.ibb.co/fg1myk/ss_0_new.png)
 ![alt_tag](https://image.ibb.co/e6Pwyk/um_000017.png)
 
 ![alt_tag](https://image.ibb.co/eRyZjQ/uu_000081_og.png)
