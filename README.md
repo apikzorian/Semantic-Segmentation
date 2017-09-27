@@ -74,13 +74,16 @@ In `layers()`, we combined the result of the previous layer with the result of t
 
 ### Training
 
-We used an adams optimizer with a 1E-4 learning rate and ran on 300 epochs with a batch size of 16. Since the goal of using this FCN was to assign each pixel to its appropriate class, we were able to usilitze the cross entropy loss function. To do this, we had to reshape the output tensor to a 2D tensor, where each row represents a pixel and each column represents a class (lines ?)
+We used an adams optimizer with a 1E-4 learning rate and ran on 50 epochs with a batch size of 4. Since the goal of using this FCN was to assign each pixel to its appropriate class, we were able to usilitze the cross entropy loss function. To do this, we had to reshape the output tensor to a 2D tensor, where each row represents a pixel and each column represents a class.
 
 
 ## Results
 
+Below is a graph that shows an exponential decay in loss over 50 epochs. Training took roughly 25 minutes on a single Titan X GPU
+
 ![alt_tag](https://image.ibb.co/fo0myk/B4_e50_l1e4.png)
 
+The results were better than expected given the parameters we used. Initially I had opted to use 300 epochs but quickly realized that although the results were impressive, runtime was an issue. I resolved this by lowering the batch size from 16 to 4 and lowering the number of epochs. Below are a few samples of my results
 
 ![alt_tag](https://image.ibb.co/doDpJk/um_000017_og.png)
 ![alt_tag](https://image.ibb.co/e6Pwyk/um_000017.png)
@@ -101,9 +104,8 @@ We used an adams optimizer with a 1E-4 learning rate and ran on 300 epochs with 
 ![alt_tag](https://image.ibb.co/btZUJk/uu_000081_1.png)
 
 
-
-## Acknowledgment
-
+## Conclusion
+Although bounding box methodologies such as YOLO and SSD are widely used for image detection in the deep-learning space, semantic segmentation can provide equal if not better results for testcases such as detecting a road from images taken in a self-driving car. With semantic segmentation, we can derive information about and paint each pixel in an image, there by eliminating the chance of claisifying nearby objects simply because they were "caught in the box". FCNs come in handy with semantic segmentatino, as they allow us to preserve spatial information and can work on images of any size.
 
 
 ##### Run
