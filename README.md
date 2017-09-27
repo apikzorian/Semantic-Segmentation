@@ -78,7 +78,13 @@ We used an adams optimizer with a 1E-4 learning rate and ran on 300 epochs with 
 
 
 ## Results
-
+![alt_tag](https://image.ibb.co/e6Pwyk/um_000017.png)
+                                   ![alt_tag](https://image.ibb.co/bwVQr5/uu_000081.png)
+![alt_tag](https://image.ibb.co/h5QfPQ/um_000057.png)
+![alt_tag](https://image.ibb.co/bwpkr5/um_000095.png)
+![alt_tag](https://image.ibb.co/m8T0PQ/um_000015.png)
+![alt_tag](https://image.ibb.co/ehYOdk/uu_000093.png)
+![alt_tag](https://image.ibb.co/btZUJk/uu_000081_1.png)
 
 
 ## Acknowledgment
