@@ -97,7 +97,7 @@ The results were better than expected given the parameters we used. Initially I 
 ![alt_tag](https://image.ibb.co/eJMHMG/rsz_ss_3.png)
 ![alt_tag](https://image.ibb.co/bwpkr5/um_000095.png)
 
-![alt_tag](https://image.ibb.co/bxpAab/ss_4.png)
+![alt_tag](https://image.ibb.co/nKEbFb/rsz_ss_4.png)
 ![alt_tag](https://image.ibb.co/m8T0PQ/um_000015.png)
 
 ![alt_tag](https://image.ibb.co/nbUnMG/ss_5.png)
