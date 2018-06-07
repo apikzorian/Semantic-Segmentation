@@ -1,6 +1,6 @@
 # Semantic Segmentation
 ### Overview
-In this project, I trained a fully convolutional neural network (FCN) and used it to classify pixels in an iamge and label those pixels that belong to the road in the image. 
+In this project, I trained a fully convolutional neural network (FCN) and used it to classify pixels in an image and label those pixels that belong to the road in the image. 
 
 ### Setup
 ##### Frameworks and Packages
